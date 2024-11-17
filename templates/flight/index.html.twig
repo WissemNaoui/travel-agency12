@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Flight Search{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .search-form {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .flight-card {
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .flight-card:hover {
+            transform: translateY(-5px);
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('flight-search-form');
+            const resultsContainer = document.getElementById('flight-results');
+            const loadingIndicator = document.getElementById('loading-indicator');
+
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(searchForm);
+                const searchParams = new URLSearchParams(formData);
+
+                loadingIndicator.style.display = 'block';
+                resultsContainer.style.opacity = '0.5';
+
+                fetch(`{{ path('app_flight_search') }}?${searchParams.toString()}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    resultsContainer.innerHTML = html;
+                    resultsContainer.style.opacity = '1';
+                    loadingIndicator.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingIndicator.style.display = 'none';
+                    resultsContainer.style.opacity = '1';
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Flight Search</h1>
+
+        <div class="search-form">
+            <form id="flight-search-form" method="get">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-plane-departure"></i></span>
+                            <input type="text" class="form-control" name="origin" placeholder="From" value="{{ app.request.query.get('origin') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-plane-arrival"></i></span>
+                            <input type="text" class="form-control" name="destination" placeholder="To" value="{{ app.request.query.get('destination') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            <input type="date" class="form-control" name="departureDate" value="{{ app.request.query.get('departureDate') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-plane"></i></span>
+                            <input type="text" class="form-control" name="airline" placeholder="Airline" value="{{ app.request.query.get('airline') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-users"></i></span>
+                            <input type="number" class="form-control" name="minSeats" placeholder="Min. Seats" value="{{ app.request.query.get('minSeats') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                            <input type="number" class="form-control" name="minPrice" placeholder="Min Price" value="{{ app.request.query.get('minPrice') }}">
+                            <input type="number" class="form-control" name="maxPrice" placeholder="Max Price" value="{{ app.request.query.get('maxPrice') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Search Flights
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="loading-indicator" class="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+        <div id="flight-results">
+            {% if flights is defined %}
+                {% include 'flight/_flight_list.html.twig' with {'flights': flights} %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

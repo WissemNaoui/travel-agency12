@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hotels{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Hotels</h1>
+
+        <!-- Coming Soon Message -->
+        <div class="text-center py-5">
+            <i class="fas fa-hotel display-1 text-muted mb-4"></i>
+            <h2 class="mb-4">Hotel Booking Coming Soon!</h2>
+            <p class="lead text-muted mb-4">
+                We're working hard to bring you the best hotel booking experience.<br>
+                This feature will be available soon.
+            </p>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="h5 mb-4">Want to be notified when it's ready?</h3>
+                            <form class="row g-3">
+                                <div class="col-md-8">
+                                    <input type="email" class="form-control" placeholder="Enter your email">
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary w-100">Notify Me</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

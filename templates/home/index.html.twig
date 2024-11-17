@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Welcome to Travel Agency{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        height: 600px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: white;
+    }
+
+    .search-box {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2rem;
+        border-radius: 10px;
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        color: #0d6efd;
+        margin-bottom: 1rem;
+    }
+
+    .package-card {
+        transition: transform 0.3s;
+        height: 100%;
+    }
+
+    .package-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .package-image {
+        height: 200px;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    <!-- Hero Section -->
+    <section class="hero-section mb-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 mb-4">Discover Your Next Adventure</h1>
+                    <p class="lead mb-5">Explore the world with our curated travel packages and create unforgettable memories.</p>
+                    
+                    <!-- Search Box -->
+                    <div class="search-box">
+                        <form class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label text-dark">Destination</label>
+                                <input type="text" class="form-control" placeholder="Where to?">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label text-dark">Check In</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label text-dark">Check Out</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="submit" class="btn btn-primary w-100">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container mb-5">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="feature-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h3>Handpicked Destinations</h3>
+                <p>Carefully selected locations to ensure the best travel experience</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <h3>Best Price Guarantee</h3>
+                <p>We offer competitive prices and amazing value for your journey</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>24/7 Support</h3>
+                <p>Our dedicated team is here to assist you anytime, anywhere</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Packages Section -->
+    <section class="container mb-5">
+        <h2 class="text-center mb-4">Featured Packages</h2>
+        <div class="row">
+            {% for package in featured_packages %}
+                <div class="col-md-4 mb-4">
+                    <div class="card package-card">
+                        <img src="https://source.unsplash.com/random/800x600/?{{ package.destination|url_encode }}" class="card-img-top package-image" alt="{{ package.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ package.name }}</h5>
+                            <p class="card-text">{{ package.description|length > 100 ? package.description|slice(0, 100) ~ '...' : package.description }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary fw-bold">${{ package.price }}</span>
+                                <span class="text-muted">{{ package.duration }} days</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <a href="#" class="btn btn-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-center">
+                    <p>No featured packages available at the moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="bg-light py-5 mb-5">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-6">
+                    <h3>Subscribe to Our Newsletter</h3>
+                    <p class="text-muted mb-4">Get the latest travel deals and updates straight to your inbox!</p>
+                    <form class="row g-3 justify-content-center">
+                        <div class="col-8">
+                            <input type="email" class="form-control" placeholder="Enter your email">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hotel Details{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Hotel Details</h1>
+
+        <!-- Coming Soon Message -->
+        <div class="text-center py-5">
+            <i class="fas fa-hotel display-1 text-muted mb-4"></i>
+            <h2 class="mb-4">Hotel Details Coming Soon!</h2>
+            <p class="lead text-muted">
+                We're working hard to bring you detailed hotel information.<br>
+                This feature will be available soon.
+            </p>
+            <a href="{{ path('app_hotels') }}" class="btn btn-primary mt-4">
+                <i class="fas fa-arrow-left me-2"></i>
+                Back to Hotels
+            </a>
+        </div>
+    </div>
+{% endblock %}

@@ -2,16 +2,138 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
-
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Welcome!{% endblock %} - Travel Agency</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>✈️</text></svg>">
+        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        {% block stylesheets %}{% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="{{ path('app_home') }}">
+                    <i class="fas fa-plane-departure"></i> Travel Agency
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_home') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_packages') }}">Packages</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_flight_index') }}">Flights</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_hotels') }}">Hotels</a>
+                        </li>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('admin') }}">
+                                    <i class="fas fa-lock"></i> Admin Panel
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <ul class="navbar-nav">
+                        {% if app.user %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user"></i> 
+                                    {% if app.user.firstName %}
+                                        {{ app.user.firstName }} {{ app.user.lastName }}
+                                    {% else %}
+                                        {{ app.user.email }}
+                                    {% endif %}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <li><a class="dropdown-item" href="{{ path('admin') }}"><i class="fas fa-lock"></i> Admin Panel</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    {% endif %}
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle"></i> Profile</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-list"></i> My Bookings</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_register') }}"><i class="fas fa-user-plus"></i> Register</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show m-3">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <!-- Main Content -->
+        <main class="container py-4">
+            {% block body %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-dark text-light py-4 mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Contact Us</h5>
+                        <p>
+                            <i class="fas fa-phone"></i> +1 234 567 890<br>
+                            <i class="fas fa-envelope"></i> info@travelagency.com<br>
+                            <i class="fas fa-map-marker-alt"></i> 123 Travel Street, City
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-light">About Us</a></li>
+                            <li><a href="#" class="text-light">Terms & Conditions</a></li>
+                            <li><a href="#" class="text-light">Privacy Policy</a></li>
+                            <li><a href="#" class="text-light">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Follow Us</h5>
+                        <div class="social-links">
+                            <a href="#" class="text-light me-2"><i class="fab fa-facebook fa-lg"></i></a>
+                            <a href="#" class="text-light me-2"><i class="fab fa-twitter fa-lg"></i></a>
+                            <a href="#" class="text-light me-2"><i class="fab fa-instagram fa-lg"></i></a>
+                            <a href="#" class="text-light"><i class="fab fa-linkedin fa-lg"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mt-4">
+                <div class="text-center">
+                    <p class="mb-0">&copy; {{ "now"|date("Y") }} Travel Agency. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        {% block javascripts %}{% endblock %}
     </body>
 </html>

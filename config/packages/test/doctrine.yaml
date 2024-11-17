@@ -1,0 +1,16 @@
+doctrine:
+    dbal:
+        # Configure a separate database for testing
+        url: '%env(resolve:DATABASE_URL)%'
+        dbname: travel_agency_test
+    orm:
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+            App:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Entity'
+                prefix: 'App\Entity'
+                alias: App

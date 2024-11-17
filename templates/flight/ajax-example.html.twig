@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AJAX vs Traditional Form Submission{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .comparison-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .feature-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .feature-list li {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+        .feature-list li i {
+            position: absolute;
+            left: 0;
+            top: 3px;
+            color: #28a745;
+        }
+        .code-block {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Understanding AJAX vs Traditional Form Submission</h1>
+
+        <div class="comparison-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">
+                                <i class="fas fa-sync-alt"></i>
+                                Traditional Form Submission
+                            </h3>
+                            <ul class="feature-list">
+                                <li>
+                                    <i class="fas fa-check"></i>
+                                    Full page reload on form submission
+                                </li>
+                                <li>
+                                    <i class="fas fa-check"></i>
+                                    Simple implementation
+                                </li>
+                                <li>
+                                    <i class="fas fa-check"></i>
+                                    Works without JavaScript
+                                </li>
+                                <li>
+                                    <i class="fas fa-check"></i>
+                                    Better for SEO by default
+                                </li>
+                            </ul>
+                            <div class="code-block">
+                                <pre><code>&lt;form action="/search" method="get"&gt;
+    &lt;input type="text" name="query"&gt;
+    &lt;button type="submit"&gt;Search&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">
+                                <i class="fas fa-bolt"></i>
+                                AJAX Form Submission
+                            </h3>
+                            <ul class="feature-list">
+                                <li>
+                                    <i class="fas fa-check"></i>
+                                    Partial page updates without reload
+                                </li>
+                                <li>
+                                    <i class="fas fa-check"></i>
+                                    Better user experience
+                                </li>
+                                <li>
+                                    <i class="fas fa-check"></i>
+                                    Reduced server load
+                                </li>
+                                <li>
+                                    <i class="fas fa-check"></i>
+                                    Smoother interactions
+                                </li>
+                            </ul>
+                            <div class="code-block">
+                                <pre><code>fetch('/search?' + new URLSearchParams({
+    query: inputValue
+}))
+.then(response => response.text())
+.then(html => {
+    resultsContainer.innerHTML = html;
+});</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h3 class="mb-4">Try it Yourself</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Traditional Form</h4>
+                    <form action="{{ path('app_flight_search') }}" method="get">
+                        <div class="mb-3">
+                            <label class="form-label">Search for Flights</label>
+                            <input type="text" name="origin" class="form-control" placeholder="From">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Search (Full Page Reload)
+                        </button>
+                    </form>
+                </div>
+
+                <div class="col-md-6">
+                    <h4>AJAX Form</h4>
+                    <form id="ajax-form">
+                        <div class="mb-3">
+                            <label class="form-label">Search for Flights</label>
+                            <input type="text" name="origin" class="form-control" placeholder="From">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Search (AJAX)
+                        </button>
+                    </form>
+                    <div id="ajax-results" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ajaxForm = document.getElementById('ajax-form');
+            const resultsContainer = document.getElementById('ajax-results');
+
+            ajaxForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const searchParams = new URLSearchParams(formData);
+
+                fetch(`{{ path('app_flight_search') }}?${searchParams.toString()}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    resultsContainer.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultsContainer.innerHTML = '<div class="alert alert-danger">An error occurred</div>';
+                });
+            });
+        });
+    </script>
+{% endblock %}

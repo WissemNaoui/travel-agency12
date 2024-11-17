@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Edit Profile</h2>
+                    {{ form_start(form) }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.firstName, 'First Name', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.firstName) }}
+                                {{ form_errors(form.firstName) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.lastName, 'Last Name', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.lastName) }}
+                                {{ form_errors(form.lastName) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.email) }}
+                            <small class="form-text text-muted">Email cannot be changed.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.phoneNumber, 'Phone Number', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.phoneNumber) }}
+                            {{ form_errors(form.phoneNumber) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.address, 'Address', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.address) }}
+                            {{ form_errors(form.address) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.dateOfBirth, 'Date of Birth', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.dateOfBirth) }}
+                            {{ form_errors(form.dateOfBirth) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.nationality, 'Nationality', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.nationality) }}
+                            {{ form_errors(form.nationality) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.passportNumber, 'Passport Number', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.passportNumber) }}
+                            {{ form_errors(form.passportNumber) }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a href="{{ path('app_profile') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
