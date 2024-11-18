@@ -1,0 +1,125 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Hotel Management{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <!-- Page Title -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Hotel Management</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\HotelCrudController').setAction('new') }}" 
+                   class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i> New Hotel
+                </a>
+            </div>
+            <div class="dropdown">
+                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fas fa-filter me-1"></i> Filter
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" data-filter="all">All Hotels</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="active">Active</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="maintenance">Under Maintenance</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="inactive">Inactive</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hotels Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="hotelsTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>City</th>
+                            <th>Country</th>
+                            <th>Rating</th>
+                            <th>Price per Night</th>
+                            <th>Available Rooms</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hotel in hotels %}
+                            <tr>
+                                <td>{{ hotel.name }}</td>
+                                <td>{{ hotel.city }}</td>
+                                <td>{{ hotel.country }}</td>
+                                <td>
+                                    {% for i in 1..5 %}
+                                        <i class="fas fa-star{{ i <= hotel.rating ? ' text-warning' : ' text-muted' }}"></i>
+                                    {% endfor %}
+                                </td>
+                                <td>€{{ hotel.pricePerNight }}</td>
+                                <td>{{ hotel.availableRooms }}</td>
+                                <td>
+                                    <span class="badge bg-{{ hotel.status == 'ACTIVE' ? 'success' : 
+                                        (hotel.status == 'MAINTENANCE' ? 'warning' : 'danger') }}">
+                                        {{ hotel.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ ea_url()
+                                            .setController('App\\Controller\\Admin\\HotelCrudController')
+                                            .setAction('edit')
+                                            .setEntityId(hotel.id) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ ea_url()
+                                            .setController('App\\Controller\\Admin\\HotelCrudController')
+                                            .setAction('detail')
+                                            .setEntityId(hotel.id) }}" 
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable
+        $('#hotelsTable').DataTable({
+            "order": [[0, "asc"]], // Sort by hotel name by default
+            "pageLength": 10,
+            "language": {
+                "lengthMenu": "Show _MENU_ hotels per page",
+                "zeroRecords": "No hotels found",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No hotels available",
+                "infoFiltered": "(filtered from _MAX_ total hotels)"
+            }
+        });
+
+        // Handle filters
+        $('.dropdown-item[data-filter]').click(function(e) {
+            e.preventDefault();
+            var filter = $(this).data('filter');
+            var table = $('#hotelsTable').DataTable();
+            
+            if (filter === 'all') {
+                table.column(6).search('').draw();
+            } else {
+                table.column(6).search(filter, true, false).draw();
+            }
+        });
+    });
+</script>
+{% endblock %}

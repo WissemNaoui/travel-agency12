@@ -14,3 +14,15 @@ easy_admin:
                     - { property: 'price' }
                     - { property: 'availableSeats' }
                     - { property: 'status' }
+        Hotel:
+            class: App\Entity\Hotel
+            controller: App\Controller\Admin\HotelCrudController
+            list:
+                fields:
+                    - { property: 'name' }
+                    - { property: 'description' }
+                    - { property: 'city' }
+                    - { property: 'country' }
+                    - { property: 'pricePerNight' }
+                    - { property: 'availableRooms' }
+                    - { property: 'rating' }

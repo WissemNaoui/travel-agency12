@@ -1,4 +1,4 @@
 controllers:
     resource: ../../src/Controller/Admin/
-    type: annotation
+    type: attribute
     prefix: /admin

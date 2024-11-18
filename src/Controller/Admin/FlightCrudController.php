@@ -49,11 +49,8 @@ class FlightCrudController extends AbstractCrudController
             ->setCurrency('EUR')
             ->setStoredAsCents(false);
 
-        yield IntegerField::new('capacity')
-            ->setLabel('Total Seats');
-
         yield IntegerField::new('availableSeats')
-            ->onlyOnIndex();
+            ->setLabel('Available Seats');
 
         yield ChoiceField::new('status')
             ->setChoices([

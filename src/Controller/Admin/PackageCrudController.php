@@ -12,6 +12,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 
 class PackageCrudController extends AbstractCrudController
 {
@@ -31,7 +34,7 @@ class PackageCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name')
+       /* yield TextField::new('name')
             ->setHelp('The name of the travel package');
             
         yield TextEditorField::new('description')
@@ -53,7 +56,22 @@ class PackageCrudController extends AbstractCrudController
         yield DateTimeField::new('endDate');
             
         yield IntegerField::new('availableSpots')
-            ->onlyOnIndex();
+            ->onlyOnIndex();*/
+
+            return[
+            TextField::new('name', 'Package Name'),
+            TextareaField::new('description', 'Description'),
+            MoneyField::new('price', 'Price')->setCurrency('USD'),
+            IntegerField::new('duration', 'Duration (days)'),
+            TextField::new('destination', 'Destination'),
+            TextField::new('country', 'Country'),
+            IntegerField::new('maxParticipants', 'Max Participants'),
+            IntegerField::new('availableSpots', 'Available Spots'),
+            DateTimeField::new('startDate', 'Start Date'),
+            DateTimeField::new('endDate', 'End Date'),
+            ArrayField::new('includedServices', 'Included Services'),
+            ArrayField::new('highlights', 'Highlights'),
+            TextField::new('status', 'Status'),];
     }
 
     public function configureActions(Actions $actions): Actions

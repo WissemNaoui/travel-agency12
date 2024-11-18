@@ -1,116 +1,46 @@
-{% extends 'admin/base.html.twig' %}
+{% extends '@EasyAdmin/page/content.html.twig' %}
 
-{% block title %}Admin Dashboard{% endblock %}
-
-{% block admin_content %}
-<div class="container-fluid">
-    <!-- Page Title -->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
-    </div>
-
-    <!-- Stats Cards -->
+{% block main %}
     <div class="row">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card text-white bg-primary mb-3">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Users</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.users }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text display-4">{{ stats.users }}</p>
                 </div>
             </div>
         </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card text-white bg-success mb-3">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Total Packages</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.packages }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-box fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+                    <h5 class="card-title">Total Packages</h5>
+                    <p class="card-text display-4">{{ stats.packages }}</p>
                 </div>
             </div>
         </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card text-white bg-info mb-3">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Total Bookings</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.bookings }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+                    <h5 class="card-title">Total Flights</h5>
+                    <p class="card-text display-4">{{ stats.flights }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Hotels</h5>
+                    <p class="card-text display-4">{{ stats.hotels }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Bookings</h5>
+                    <p class="card-text display-4">{{ stats.bookings }}</p>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Recent Bookings -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Recent Bookings</h6>
-            <a href="{{ path('app_admin_bookings') }}" class="btn btn-sm btn-primary">View All</a>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Reference</th>
-                            <th>User</th>
-                            <th>Package/Flight</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for booking in recent_bookings %}
-                            <tr>
-                                <td>{{ booking.bookingReference }}</td>
-                                <td>{{ booking.user.email }}</td>
-                                <td>
-                                    {% if booking.package %}
-                                        {{ booking.package.name }}
-                                    {% elseif booking.flight %}
-                                        Flight: {{ booking.flight.flightNumber }}
-                                    {% endif %}
-                                </td>
-                                <td>{{ booking.bookingDate|date('Y-m-d H:i') }}</td>
-                                <td>
-                                    <span class="badge {% if booking.status == 'confirmed' %}bg-success{% elseif booking.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
-                                        {{ booking.status|title }}
-                                    </span>
-                                </td>
-                                <td>${{ booking.totalPrice }}</td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="6" class="text-center">No bookings found</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}

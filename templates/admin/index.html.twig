@@ -1,0 +1,139 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Dashboard{% endblock %}
+
+{% block main %}
+    {# Statistics Cards #}
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl">
+            <div class="card text-white bg-primary shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white">Users</h6>
+                            <h2 class="display-4 mb-0">{{ stats.users }}</h2>
+                        </div>
+                        <div class="fa-3x">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl">
+            <div class="card text-white bg-success shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white">Packages</h6>
+                            <h2 class="display-4 mb-0">{{ stats.packages }}</h2>
+                        </div>
+                        <div class="fa-3x">
+                            <i class="fas fa-suitcase"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl">
+            <div class="card text-white bg-info shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white">Flights</h6>
+                            <h2 class="display-4 mb-0">{{ stats.flights }}</h2>
+                        </div>
+                        <div class="fa-3x">
+                            <i class="fas fa-plane"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl">
+            <div class="card text-white bg-warning shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white">Hotels</h6>
+                            <h2 class="display-4 mb-0">{{ stats.hotels }}</h2>
+                        </div>
+                        <div class="fa-3x">
+                            <i class="fas fa-hotel"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl">
+            <div class="card text-white bg-danger shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white">Bookings</h6>
+                            <h2 class="display-4 mb-0">{{ stats.bookings }}</h2>
+                        </div>
+                        <div class="fa-3x">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Recent Bookings Table #}
+    <div class="card shadow-sm mt-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Recent Bookings</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Customer</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in recent_bookings %}
+                            <tr>
+                                <td>{{ booking.bookingReference }}</td>
+                                <td>{{ booking.user.email }}</td>
+                                <td>
+                                    {% if booking.package %}
+                                        Package: {{ booking.package.name }}
+                                    {% elseif booking.flight %}
+                                        Flight: {{ booking.flight.flightNumber }}
+                                    {% elseif booking.hotel %}
+                                        Hotel: {{ booking.hotel.name }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ booking.bookingDate|date('Y-m-d H:i') }}</td>
+                                <td>
+                                    <span class="badge bg-{{ booking.status == 'confirmed' ? 'success' : (booking.status == 'pending' ? 'warning' : 'danger') }}">
+                                        {{ booking.status|title }}
+                                    </span>
+                                </td>
+                                <td>${{ booking.totalPrice }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">No recent bookings found</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

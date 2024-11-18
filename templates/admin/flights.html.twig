@@ -1,0 +1,127 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Flight Management{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <!-- Page Title -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Flight Management</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\FlightCrudController').setAction('new') }}" 
+                   class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i> New Flight
+                </a>
+            </div>
+            <div class="dropdown">
+                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fas fa-filter me-1"></i> Filter
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" data-filter="all">All Flights</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="scheduled">Scheduled</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="in-progress">In Progress</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="completed">Completed</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="cancelled">Cancelled</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flights Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="flightsTable">
+                    <thead>
+                        <tr>
+                            <th>Flight Number</th>
+                            <th>Airline</th>
+                            <th>Origin</th>
+                            <th>Destination</th>
+                            <th>Departure Time</th>
+                            <th>Arrival Time</th>
+                            <th>Price</th>
+                            <th>Available Seats</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for flight in flights %}
+                            <tr>
+                                <td>{{ flight.flightNumber }}</td>
+                                <td>{{ flight.airline }}</td>
+                                <td>{{ flight.origin }}</td>
+                                <td>{{ flight.destination }}</td>
+                                <td>{{ flight.departureTime|date('Y-m-d H:i') }}</td>
+                                <td>{{ flight.arrivalTime|date('Y-m-d H:i') }}</td>
+                                <td>€{{ flight.price }}</td>
+                                <td>{{ flight.availableSeats }}/{{ flight.capacity }}</td>
+                                <td>
+                                    <span class="badge bg-{{ flight.status == 'SCHEDULED' ? 'primary' : 
+                                        (flight.status == 'IN_PROGRESS' ? 'info' : 
+                                        (flight.status == 'COMPLETED' ? 'success' : 'danger')) }}">
+                                        {{ flight.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ ea_url()
+                                            .setController('App\\Controller\\Admin\\FlightCrudController')
+                                            .setAction('edit')
+                                            .setEntityId(flight.id) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ ea_url()
+                                            .setController('App\\Controller\\Admin\\FlightCrudController')
+                                            .setAction('detail')
+                                            .setEntityId(flight.id) }}" 
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable
+        $('#flightsTable').DataTable({
+            "order": [[4, "asc"]], // Sort by departure time by default
+            "pageLength": 10,
+            "language": {
+                "lengthMenu": "Show _MENU_ flights per page",
+                "zeroRecords": "No flights found",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No flights available",
+                "infoFiltered": "(filtered from _MAX_ total flights)"
+            }
+        });
+
+        // Handle filters
+        $('.dropdown-item[data-filter]').click(function(e) {
+            e.preventDefault();
+            var filter = $(this).data('filter');
+            var table = $('#flightsTable').DataTable();
+            
+            if (filter === 'all') {
+                table.column(8).search('').draw();
+            } else {
+                table.column(8).search(filter, true, false).draw();
+            }
+        });
+    });
+</script>
+{% endblock %}
