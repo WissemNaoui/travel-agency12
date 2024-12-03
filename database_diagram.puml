@@ -1,0 +1,63 @@
+@startuml Travel Agency Database Diagram
+
+!define table(x) class x << (T,#FFAAAA) >>
+!define primary_key(x) <u>x</u>
+!define foreign_key(x) #x#
+
+' Define tables
+table(User) {
+    primary_key(id): INT
+    email: VARCHAR(180)
+    firstName: VARCHAR(255)
+    lastName: VARCHAR(255)
+    password: VARCHAR(255)
+    roles: JSON
+}
+
+table(Booking) {
+    primary_key(id): INT
+    foreign_key(user_id): INT
+    foreign_key(package_id): INT
+    foreign_key(flight_id): INT
+    foreign_key(hotel_id): INT
+    bookingDate: DATETIME
+    startDate: DATETIME
+    endDate: DATETIME
+    totalPrice: FLOAT
+    status: VARCHAR(50)
+    numberOfPeople: INT
+    specialRequests: TEXT
+}
+
+table(Package) {
+    primary_key(id): INT
+    name: VARCHAR(255)
+    description: TEXT
+    price: DECIMAL(10,2)
+    duration: INT
+}
+
+table(Flight) {
+    primary_key(id): INT
+    departureCity: VARCHAR(255)
+    arrivalCity: VARCHAR(255)
+    departureTime: DATETIME
+    arrivalTime: DATETIME
+    price: DECIMAL(10,2)
+}
+
+table(Hotel) {
+    primary_key(id): INT
+    name: VARCHAR(255)
+    location: VARCHAR(255)
+    rating: INT
+    pricePerNight: DECIMAL(10,2)
+}
+
+' Define relationships
+User "1" -- "0..*" Booking
+Package "1" -- "0..*" Booking
+Flight "1" -- "0..*" Booking
+Hotel "1" -- "0..*" Booking
+
+@enduml

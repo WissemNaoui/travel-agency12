@@ -48,15 +48,9 @@ class FlightController extends AbstractController
             ->where('f.origin LIKE :origin')
             ->setParameter('origin', '%' . $criteria['origin'] . '%')
             ->andWhere('f.destination LIKE :destination')
-            ->setParameter('destination', '%' . $criteria['destination'] . '%');
-
-        if ($criteria['departureTime']) {
-            $queryBuilder
-                ->andWhere('DATE_FORMAT(f.departureTime, \'%Y-%m-%d\') = :departureTime')
-                ->setParameter('departureTime', $criteria['departureTime']);
-        }
-
-        $queryBuilder
+            ->setParameter('destination', '%' . $criteria['destination'] . '%')
+            ->andWhere('DATE(f.departureTime) = :departureTime')
+            ->setParameter('departureTime', $criteria['departureTime'])
             ->andWhere('f.price >= :minPrice')
             ->setParameter('minPrice', $criteria['minPrice'] ?: 0)
             ->andWhere('f.price <= :maxPrice')
