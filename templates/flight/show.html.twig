@@ -1,21 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Flight Details - {{ flight.flightNumber }}{% endblock %}
+{% block title %}flights Details - {{ flight.flightNumber }}{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        .flight-details {
+        .flights-details {
             background-color: #f8f9fa;
             border-radius: 10px;
             padding: 30px;
             margin-bottom: 30px;
         }
-        .flight-path {
+        .flights-path {
             position: relative;
             padding: 20px 0;
         }
-        .flight-path::before {
+        .flights-path::before {
             content: '';
             position: absolute;
             top: 50%;
@@ -24,7 +24,7 @@
             border-top: 2px dashed #dee2e6;
             z-index: 0;
         }
-        .flight-path i {
+        .flights-path i {
             position: relative;
             background: #fff;
             padding: 10px;
@@ -44,13 +44,13 @@
 {% block body %}
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Flight Details</h1>
-            <a href="{{ path('app_flight_index') }}" class="btn btn-outline-primary">
+            <h1>flights Details</h1>
+            <a href="{{ path('app_flights') }}" class="btn btn-outline-primary">
                 <i class="fas fa-arrow-left"></i> Back to Search
             </a>
         </div>
 
-        <div class="flight-details">
+        <div class="flights-details">
             <div class="row">
                 <div class="col-md-8">
                     <div class="card mb-4">
@@ -58,12 +58,14 @@
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h3 class="card-title">
                                     <i class="fas fa-plane text-primary"></i>
-                                    {{ flight.airline }}
+                                    {{ 
+                                        
+                                        flight.airline }}
                                 </h3>
                                 <span class="badge bg-primary">{{ flight.flightNumber }}</span>
                             </div>
 
-                            <div class="flight-path text-center mb-4">
+                            <div class="flights-path text-center mb-4">
                                 <div class="row">
                                     <div class="col-4">
                                         <h4>{{ flight.origin }}</h4>
@@ -95,10 +97,11 @@
                                         <div class="card-body">
                                             <h5 class="card-title">
                                                 <i class="fas fa-clock text-primary"></i>
-                                                Flight Duration
+                                                flights Duration
                                             </h5>
                                             <p class="card-text">
-                                                {{ flight.departureTime.diff(flight.arrivalTime).format('%h hours %i minutes')|abs }}
+{{ flight.departureTime.diff(flight.arrivalTime).format('%h hours %i minutes') }}
+
                                             </p>
                                         </div>
                                     </div>
@@ -130,7 +133,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Flight Status</h5>
+                            <h5 class="card-title">flights Status</h5>
                             <p class="card-text">
                                 <span class="badge bg-success">{{ flight.status|title }}</span>
                             </p>
