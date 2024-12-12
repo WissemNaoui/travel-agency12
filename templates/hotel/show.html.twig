@@ -1,23 +1,71 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hotel Details{% endblock %}
+{% block title %}{{ hotel.name }}{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1 class="mb-4">Hotel Details</h1>
+    <div class="container my-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_hotels') }}">Hotels</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ hotel.name }}</li>
+            </ol>
+        </nav>
 
-        <!-- Coming Soon Message -->
-        <div class="text-center py-5">
-            <i class="fas fa-hotel display-1 text-muted mb-4"></i>
-            <h2 class="mb-4">Hotel Details Coming Soon!</h2>
-            <p class="lead text-muted">
-                We're working hard to bring you detailed hotel information.<br>
-                This feature will be available soon.
-            </p>
-            <a href="{{ path('app_hotels') }}" class="btn btn-primary mt-4">
-                <i class="fas fa-arrow-left me-2"></i>
-                Back to Hotels
-            </a>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1 class="mb-3">{{ hotel.name }}</h1>
+                        <div class="mb-3">
+                            <span class="badge bg-warning text-dark me-2">{{ hotel.rating }} Stars</span>
+                            <i class="fas fa-map-marker-alt text-danger"></i>
+                            <span class="ms-1">{{ hotel.address }}, {{ hotel.city }}, {{ hotel.country }}</span>
+                        </div>
+                        
+                        <h5 class="mt-4">Description</h5>
+                        <p>{{ hotel.description }}</p>
+
+                        <h5 class="mt-4">Amenities</h5>
+                        <div class="row">
+                            {% for amenity in hotel.amenities %}
+                                <div class="col-md-4 mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>{{ amenity }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Booking Information</h5>
+                                <div class="mb-3">
+                                    <strong class="d-block">Price per night</strong>
+                                    <span class="text-primary h4">€{{ hotel.pricePerNight }}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong class="d-block">Available Rooms</strong>
+                                    <span class="text-success">{{ hotel.availableRooms }} rooms left</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong class="d-block">Contact</strong>
+                                    <div><i class="fas fa-phone me-2"></i>{{ hotel.phoneNumber }}</div>
+                                    {% if hotel.website %}
+                                        <div>
+                                            <i class="fas fa-globe me-2"></i>
+                                            <a href="{{ hotel.website }}" target="_blank">Visit Website</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary">Book Now</button>
+                                    <button class="btn btn-outline-primary">Contact Hotel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
