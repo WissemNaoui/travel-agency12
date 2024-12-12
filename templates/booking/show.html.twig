@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Booking Details{% endblock %}
+
+{% block body %}
+    <div class="container my-4">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_bookings') }}">My Bookings</a></li>
+                <li class="breadcrumb-item active">{{ booking.bookingReference }}</li>
+            </ol>
+        </nav>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h2 mb-0">
+                        {% if booking.package %}
+                            {{ booking.package.name }}
+                        {% elseif booking.flight %}
+                            Flight {{ booking.flight.flightNumber }}
+                        {% elseif booking.hotel %}
+                            {{ booking.hotel.name }}
+                        {% endif %}
+                    </h1>
+                    <span class="badge bg-{{ booking.status == 'confirmed' ? 'success' : 'warning' }} fs-6">
+                        {{ booking.status|title }}
+                    </span>
+                </div>
+
+                <p class="text-muted mb-4">
+                    Booking Reference: {{ booking.bookingReference }}
+                </p>
+
+                <div class="row">
+                    {% if booking.package %}
+                        <div class="col-md-6 mb-4">
+                            <h4>Package Details</h4>
+                            <p><strong>Destination:</strong> {{ booking.package.destination }}</p>
+                            <p><strong>Duration:</strong> {{ booking.package.duration }} days</p>
+                            <p><strong>Number of Travelers:</strong> {{ booking.numberOfPeople }}</p>
+                            {% if booking.specialRequests %}
+                                <p><strong>Special Requests:</strong> {{ booking.specialRequests }}</p>
+                            {% endif %}
+                        </div>
+                    {% elseif booking.flight %}
+                        <div class="col-md-6 mb-4">
+                            <h4>Flight Details</h4>
+                            <p><strong>From:</strong> {{ booking.flight.origin }}</p>
+                            <p><strong>To:</strong> {{ booking.flight.destination }}</p>
+                            <p><strong>Airline:</strong> {{ booking.flight.airline }}</p>
+                            <p><strong>Number of Passengers:</strong> {{ booking.numberOfPassengers }}</p>
+                        </div>
+                    {% elseif booking.hotel %}
+                        <div class="col-md-6 mb-4">
+                            <h4>Hotel Details</h4>
+                            <p><strong>Hotel:</strong> {{ booking.hotel.name }}</p>
+                            <p><strong>Address:</strong> {{ booking.hotel.address }}</p>
+                            <p><strong>City:</strong> {{ booking.hotel.city }}</p>
+                            <p><strong>Country:</strong> {{ booking.hotel.country }}</p>
+                            <p><strong>Number of Guests:</strong> {{ booking.numberOfGuests }}</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="col-md-6 mb-4">
+                        <h4>Booking Details</h4>
+                        <p><strong>Booking Date:</strong> {{ booking.bookingDate|date('M d, Y H:i') }}</p>
+                        <p><strong>Travel Date:</strong> {{ booking.startDate|date('M d, Y') }}</p>
+                        {% if booking.endDate %}
+                            <p><strong>Return Date:</strong> {{ booking.endDate|date('M d, Y') }}</p>
+                        {% endif %}
+                        <p><strong>Total Price:</strong> ${{ booking.totalPrice|number_format(2, '.', ',') }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="{{ path('app_bookings') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to My Bookings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

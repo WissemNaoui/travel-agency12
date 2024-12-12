@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Booking Confirmation{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .confirmation-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        .confirmation-header {
+            border-bottom: 2px solid #f8f9fa;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+        }
+        .booking-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .success-icon {
+            color: #28a745;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="confirmation-card">
+            <div class="text-center confirmation-header">
+                <i class="fas fa-check-circle success-icon"></i>
+                <h1 class="mb-3">Booking Confirmed!</h1>
+                <p class="lead text-muted">Thank you for booking with us</p>
+            </div>
+
+            <div class="booking-details">
+                <h3>Booking Details</h3>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5>Booking Information</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>Booking ID:</strong> {{ booking.id }}</li>
+                            <li><strong>Status:</strong> <span class="badge bg-success">{{ booking.status|title }}</span></li>
+                            <li><strong>Booking Date:</strong> {{ booking.bookingDate|date('F d, Y') }}</li>
+                            <li><strong>Total Price:</strong> ${{ booking.totalPrice|number_format(2) }}</li>
+                        </ul>
+                    </div>
+                    
+                    {% if booking.flight %}
+                        <div class="col-md-6">
+                            <h5>Flight Details</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Flight Number:</strong> {{ booking.flight.flightNumber }}</li>
+                                <li><strong>From:</strong> {{ booking.flight.origin }}</li>
+                                <li><strong>To:</strong> {{ booking.flight.destination }}</li>
+                                <li><strong>Departure:</strong> {{ booking.flight.departureTime|date('F d, Y H:i') }}</li>
+                                <li><strong>Arrival:</strong> {{ booking.flight.arrivalTime|date('F d, Y H:i') }}</li>
+                                <li><strong>Passengers:</strong> {{ booking.numberOfPassengers }}</li>
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    {% if booking.hotel %}
+                        <div class="col-md-6">
+                            <h5>Hotel Details</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Hotel:</strong> {{ booking.hotel.name }}</li>
+                                <li><strong>Check-in:</strong> {{ booking.checkInDate|date('F d, Y') }}</li>
+                                <li><strong>Check-out:</strong> {{ booking.checkOutDate|date('F d, Y') }}</li>
+                                <li><strong>Guests:</strong> {{ booking.numberOfGuests }}</li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ path('app_home') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Back to Homepage
+                </a>
+                {% if booking.flight %}
+                    <a href="{{ path('app_flights') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-plane"></i> Book Another Flight
+                    </a>
+                {% endif %}
+                {% if booking.hotel %}
+                    <a href="{{ path('app_hotels') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-hotel"></i> Book Another Hotel
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

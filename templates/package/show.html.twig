@@ -59,21 +59,34 @@
                             <span><i class="fas fa-users"></i> Available Spots:</span>
                             <strong>{{ package.availableSpots }}</strong>
                         </p>
-                        <form>
-                            <div class="mb-3">
-                                <label class="form-label">Travel Date</label>
-                                <input type="date" class="form-control" required>
+                        {% if app.user %}
+                            <form action="{{ path('booking_create_package', {'id': package.id}) }}" method="POST">
+                                <input type="hidden" name="_token" value="{{ csrf_token('book-package-' ~ package.id) }}">
+                                <div class="mb-3">
+                                    <label class="form-label">Travel Date</label>
+                                    <input type="date" name="start_date" class="form-control" 
+                                           min="{{ package.startDate|date('Y-m-d') }}" 
+                                           max="{{ package.endDate|date('Y-m-d') }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Number of Travelers</label>
+                                    <select name="number_of_people" class="form-select" required>
+                                        {% for i in 1..min(package.availableSpots, 10) %}
+                                            <option value="{{ i }}">{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Special Requests</label>
+                                    <textarea name="special_requests" class="form-control" rows="3" placeholder="Any special requirements or requests?"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 mb-3">Book Now</button>
+                            </form>
+                        {% else %}
+                            <div class="alert alert-info">
+                                Please <a href="{{ path('app_login') }}">login</a> to book this package.
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Number of Travelers</label>
-                                <select class="form-select" required>
-                                    {% for i in 1..min(package.availableSpots, 10) %}
-                                        <option value="{{ i }}">{{ i }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100 mb-3">Book Now</button>
-                        </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>

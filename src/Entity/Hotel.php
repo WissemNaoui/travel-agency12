@@ -47,6 +47,9 @@ class Hotel
     #[ORM\Column(length: 50)]
     private ?string $phoneNumber = null;
 
+    #[ORM\Column(options: ["default" => 4])]
+    private ?int $maxGuests = 4;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -170,6 +173,17 @@ class Hotel
     public function setPhoneNumber(string $phoneNumber): static
     {
         $this->phoneNumber = $phoneNumber;
+        return $this;
+    }
+
+    public function getMaxGuests(): ?int
+    {
+        return $this->maxGuests;
+    }
+
+    public function setMaxGuests(int $maxGuests): static
+    {
+        $this->maxGuests = $maxGuests;
         return $this;
     }
 }

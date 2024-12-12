@@ -16,6 +16,41 @@ class PackageRepository extends ServiceEntityRepository
         parent::__construct($registry, Package::class);
     }
 
+    public function findBySearchCriteria(array $criteria, array $orderBy = null, $limit = null): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->andWhere('p.status = :status')
+            ->setParameter('status', $criteria['status'] ?? 'available');
+
+        // Add destination filter if provided
+        if (!empty($criteria['destination'])) {
+            $qb->andWhere('LOWER(p.destination) LIKE LOWER(:destination)')
+               ->setParameter('destination', '%' . $criteria['destination'] . '%');
+        }
+
+        // Add date range filter if provided
+        if (!empty($criteria['start_date']) && !empty($criteria['end_date'])) {
+            $qb->andWhere('p.start_date >= :start_date')
+               ->andWhere('p.end_date <= :end_date')
+               ->setParameter('start_date', $criteria['start_date'])
+               ->setParameter('end_date', $criteria['end_date']);
+        }
+
+        // Add ordering
+        if ($orderBy) {
+            foreach ($orderBy as $field => $direction) {
+                $qb->orderBy('p.' . $field, $direction);
+            }
+        }
+
+        // Add limit
+        if ($limit) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Package[] Returns an array of Package objects
 //     */

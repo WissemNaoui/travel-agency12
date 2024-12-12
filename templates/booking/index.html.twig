@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Bookings{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+        <h1 class="mb-4">My Bookings</h1>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% if bookings is empty %}
+            <div class="alert alert-info">
+                You don't have any bookings yet. 
+                Browse our <a href="{{ path('app_packages') }}">packages</a> or 
+                <a href="{{ path('app_flights') }}">flights</a> to start your journey!
+            </div>
+        {% else %}
+            <div class="row">
+                {% for booking in bookings %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title mb-0">
+                                        {% if booking.package %}
+                                            {{ booking.package.name }}
+                                        {% elseif booking.flight %}
+                                            Flight {{ booking.flight.flightNumber }}
+                                        {% endif %}
+                                    </h5>
+                                    <span class="badge bg-{{ booking.status == 'confirmed' ? 'success' : 'warning' }}">
+                                        {{ booking.status|title }}
+                                    </span>
+                                </div>
+
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Booking Reference: {{ booking.bookingReference }}
+                                    </small>
+                                </p>
+
+                                {% if booking.package %}
+                                    <p class="mb-2">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        {{ booking.package.destination }}
+                                    </p>
+                                    <p class="mb-2">
+                                        <i class="fas fa-users"></i>
+                                        {{ booking.numberOfPeople }} travelers
+                                    </p>
+                                {% elseif booking.flight %}
+                                    <p class="mb-2">
+                                        <i class="fas fa-plane-departure"></i>
+                                        {{ booking.flight.origin }} → {{ booking.flight.destination }}
+                                    </p>
+                                    <p class="mb-2">
+                                        <i class="fas fa-users"></i>
+                                        {{ booking.numberOfPassengers }} passengers
+                                    </p>
+                                {% endif %}
+
+                                <p class="mb-2">
+                                    <i class="fas fa-calendar"></i>
+                                    {{ booking.startDate|date('M d, Y') }}
+                                    {% if booking.endDate %}
+                                        - {{ booking.endDate|date('M d, Y') }}
+                                    {% endif %}
+                                </p>
+
+                                <p class="mb-3">
+                                    <i class="fas fa-tag"></i>
+                                    Total: ${{ booking.totalPrice|number_format(2, '.', ',') }}
+                                </p>
+
+                                <a href="{{ path('app_booking_show', {'id': booking.id}) }}" 
+                                   class="btn btn-outline-primary btn-sm">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

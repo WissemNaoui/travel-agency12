@@ -11,6 +11,18 @@
             </ol>
         </nav>
 
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="row">
@@ -38,29 +50,41 @@
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Booking Information</h5>
-                                <div class="mb-3">
-                                    <strong class="d-block">Price per night</strong>
-                                    <span class="text-primary h4">€{{ hotel.pricePerNight }}</span>
+                                <h5 class="card-title">Book This Hotel</h5>
+                                <div class="price-info mb-3">
+                                    <h6 class="mb-2">Price per night: €{{ hotel.pricePerNight|number_format(2, '.', ',') }}</h6>
+                                    <div id="totalPrice" class="text-primary fw-bold"></div>
                                 </div>
-                                <div class="mb-3">
-                                    <strong class="d-block">Available Rooms</strong>
-                                    <span class="text-success">{{ hotel.availableRooms }} rooms left</span>
-                                </div>
-                                <div class="mb-3">
-                                    <strong class="d-block">Contact</strong>
-                                    <div><i class="fas fa-phone me-2"></i>{{ hotel.phoneNumber }}</div>
-                                    {% if hotel.website %}
-                                        <div>
-                                            <i class="fas fa-globe me-2"></i>
-                                            <a href="{{ hotel.website }}" target="_blank">Visit Website</a>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-primary">Book Now</button>
-                                    <button class="btn btn-outline-primary">Contact Hotel</button>
-                                </div>
+                                <form method="post" action="{{ path('booking_create', {'id': hotel.id}) }}" id="bookingForm" class="needs-validation" novalidate>
+                                    <input type="hidden" name="_token" value="{{ csrf_token('book-hotel-' ~ hotel.id) }}">
+                                    
+                                    <div class="mb-3">
+                                        <label for="start_date" class="form-label">Check-in Date</label>
+                                        <input type="date" class="form-control" id="start_date" name="start_date" required 
+                                               min="{{ "now"|date("Y-m-d") }}"
+                                               value="{{ "now"|date("Y-m-d") }}">
+                                        <div class="invalid-feedback">Please select a valid check-in date.</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="end_date" class="form-label">Check-out Date</label>
+                                        <input type="date" class="form-control" id="end_date" name="end_date" required 
+                                               min="{{ "now"|date("Y-m-d") }}"
+                                               value="{{ ("now"|date_modify("+1 day"))|date("Y-m-d") }}">
+                                        <div class="invalid-feedback">Please select a valid check-out date.</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="number_of_people" class="form-label">Number of Guests</label>
+                                        <input type="number" class="form-control" id="number_of_people" 
+                                               name="number_of_people" min="1" max="{{ hotel.maxGuests }}" value="1" required>
+                                        <div class="invalid-feedback">Please enter a valid number of guests (1-{{ hotel.maxGuests }}).</div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary w-100" id="bookButton">
+                                        <i class="fas fa-calendar-check me-2"></i>Book Now
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -68,4 +92,84 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('bookingForm');
+            const startDateInput = document.getElementById('start_date');
+            const endDateInput = document.getElementById('end_date');
+            const numberOfPeopleInput = document.getElementById('number_of_people');
+            const totalPriceDiv = document.getElementById('totalPrice');
+            const pricePerNight = {{ hotel.pricePerNight }};
+
+            function updateTotalPrice() {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                
+                if (startDate && endDate && endDate > startDate) {
+                    const nights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                    const totalPrice = nights * pricePerNight;
+                    totalPriceDiv.textContent = `Total Price: €${totalPrice.toFixed(2)} (${nights} night${nights > 1 ? 's' : ''})`;
+                } else {
+                    totalPriceDiv.textContent = '';
+                }
+            }
+
+            function validateDates() {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (startDate < today) {
+                    startDateInput.setCustomValidity('Check-in date cannot be in the past');
+                    return false;
+                }
+
+                if (endDate <= startDate) {
+                    endDateInput.setCustomValidity('Check-out date must be after check-in date');
+                    return false;
+                }
+
+                startDateInput.setCustomValidity('');
+                endDateInput.setCustomValidity('');
+                return true;
+            }
+
+            startDateInput.addEventListener('change', function() {
+                this.setCustomValidity('');
+                validateDates();
+                updateTotalPrice();
+                endDateInput.min = this.value;
+            });
+
+            endDateInput.addEventListener('change', function() {
+                this.setCustomValidity('');
+                validateDates();
+                updateTotalPrice();
+            });
+
+            numberOfPeopleInput.addEventListener('change', function() {
+                const maxGuests = {{ hotel.maxGuests }};
+                if (this.value > maxGuests) {
+                    this.setCustomValidity(`Maximum ${maxGuests} guests allowed`);
+                } else if (this.value < 1) {
+                    this.setCustomValidity('Minimum 1 guest required');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+
+            // Clear validations on input
+            startDateInput.addEventListener('input', () => startDateInput.setCustomValidity(''));
+            endDateInput.addEventListener('input', () => endDateInput.setCustomValidity(''));
+            numberOfPeopleInput.addEventListener('input', () => numberOfPeopleInput.setCustomValidity(''));
+
+            // Initial calculation
+            updateTotalPrice();
+        });
+    </script>
 {% endblock %}

@@ -58,9 +58,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h3 class="card-title">
                                     <i class="fas fa-plane text-primary"></i>
-                                    {{ 
-                                        
-                                        flight.airline }}
+                                    {{ flight.airline }}
                                 </h3>
                                 <span class="badge bg-primary">{{ flight.flightNumber }}</span>
                             </div>
@@ -126,9 +124,24 @@
                     <div class="price-card mb-4">
                         <h3 class="mb-3">Price per Person</h3>
                         <div class="display-4 mb-3">${{ flight.price|number_format(2) }}</div>
-                        <button class="btn btn-light btn-lg w-100">
-                            <i class="fas fa-ticket-alt"></i> Book Now
-                        </button>
+                        <form method="post" action="{{ path('booking_create_flight', {'id': flight.id}) }}" id="bookingForm" class="needs-validation" novalidate>
+                            <input type="hidden" name="_token" value="{{ csrf_token('book-flight-' ~ flight.id) }}">
+                            
+                            <div class="mb-3">
+                                <label for="number_of_passengers" class="form-label text-light">Number of Passengers</label>
+                                <input type="number" class="form-control" id="number_of_passengers" name="number_of_passengers" 
+                                       min="1" max="{{ flight.availableSeats }}" value="1" required>
+                                <div class="invalid-feedback text-light">
+                                    Please enter a valid number of passengers (1-{{ flight.availableSeats }}).
+                                </div>
+                            </div>
+
+                            <div id="totalPrice" class="text-light mb-3 fw-bold"></div>
+                            
+                            <button type="submit" class="btn btn-light btn-lg w-100">
+                                <i class="fas fa-ticket-alt"></i> Book Now
+                            </button>
+                        </form>
                     </div>
 
                     <div class="card">
@@ -159,4 +172,42 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('bookingForm');
+            const passengersInput = document.getElementById('number_of_passengers');
+            const totalPriceDiv = document.getElementById('totalPrice');
+            const pricePerPerson = {{ flight.price }};
+            const maxSeats = {{ flight.availableSeats }};
+
+            function updateTotalPrice() {
+                const passengers = parseInt(passengersInput.value) || 0;
+                const total = (passengers * pricePerPerson).toFixed(2);
+                totalPriceDiv.textContent = `Total Price: $${total}`;
+            }
+
+            passengersInput.addEventListener('input', function() {
+                let value = parseInt(this.value) || 0;
+                if (value < 1) value = 1;
+                if (value > maxSeats) value = maxSeats;
+                this.value = value;
+                updateTotalPrice();
+            });
+
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            });
+
+            // Initialize total price
+            updateTotalPrice();
+        });
+    </script>
 {% endblock %}

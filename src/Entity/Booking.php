@@ -51,6 +51,18 @@ class Booking
     #[ORM\Column(length: 255)]
     private ?string $bookingReference = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $numberOfPassengers = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $checkInDate = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $checkOutDate = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $numberOfGuests = null;
+
     public function __construct()
     {
         $this->bookingDate = new \DateTime();
@@ -191,6 +203,50 @@ class Booking
     public function setBookingReference(string $bookingReference): static
     {
         $this->bookingReference = $bookingReference;
+        return $this;
+    }
+
+    public function getNumberOfPassengers(): ?int
+    {
+        return $this->numberOfPassengers;
+    }
+
+    public function setNumberOfPassengers(?int $numberOfPassengers): static
+    {
+        $this->numberOfPassengers = $numberOfPassengers;
+        return $this;
+    }
+
+    public function getCheckInDate(): ?\DateTimeInterface
+    {
+        return $this->checkInDate;
+    }
+
+    public function setCheckInDate(?\DateTimeInterface $checkInDate): static
+    {
+        $this->checkInDate = $checkInDate;
+        return $this;
+    }
+
+    public function getCheckOutDate(): ?\DateTimeInterface
+    {
+        return $this->checkOutDate;
+    }
+
+    public function setCheckOutDate(?\DateTimeInterface $checkOutDate): static
+    {
+        $this->checkOutDate = $checkOutDate;
+        return $this;
+    }
+
+    public function getNumberOfGuests(): ?int
+    {
+        return $this->numberOfGuests;
+    }
+
+    public function setNumberOfGuests(?int $numberOfGuests): static
+    {
+        $this->numberOfGuests = $numberOfGuests;
         return $this;
     }
 }
