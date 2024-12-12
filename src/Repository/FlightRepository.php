@@ -100,4 +100,33 @@ class FlightRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function search(array $criteria): array
+    {
+        $qb = $this->createQueryBuilder('f')
+            ->andWhere('f.availableSeats > 0');
+
+        if (!empty($criteria['destination'])) {
+            $qb->andWhere('(LOWER(f.destination) LIKE LOWER(:destination) OR LOWER(f.origin) LIKE LOWER(:destination))')
+               ->setParameter('destination', '%' . $criteria['destination'] . '%');
+        }
+
+        if (!empty($criteria['departure_date'])) {
+            $startOfDay = clone $criteria['departure_date'];
+            $startOfDay->setTime(0, 0, 0);
+            
+            $endOfDay = clone $criteria['departure_date'];
+            $endOfDay->setTime(23, 59, 59);
+
+            $qb->andWhere('f.departureTime BETWEEN :start AND :end')
+               ->setParameter('start', $startOfDay)
+               ->setParameter('end', $endOfDay);
+        }
+
+        // Order by departure time and price
+        $qb->orderBy('f.departureTime', 'ASC')
+           ->addOrderBy('f.price', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
 }

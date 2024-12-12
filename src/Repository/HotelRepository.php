@@ -16,6 +16,35 @@ class HotelRepository extends ServiceEntityRepository
         parent::__construct($registry, Hotel::class);
     }
 
+    public function findBySearchCriteria(array $criteria): array
+    {
+        $qb = $this->createQueryBuilder('h')
+            ->andWhere('h.availableRooms > 0');
+
+        if (!empty($criteria['city'])) {
+            $qb->andWhere('LOWER(h.city) LIKE LOWER(:city)')
+               ->setParameter('city', '%' . $criteria['city'] . '%');
+        }
+
+        // Add a check for country as well for better search results
+        if (!empty($criteria['city'])) {
+            $qb->orWhere('LOWER(h.country) LIKE LOWER(:country)')
+               ->setParameter('country', '%' . $criteria['city'] . '%');
+        }
+
+        // Check room availability based on max guests if provided
+        if (!empty($criteria['guests'])) {
+            $qb->andWhere('h.maxGuests >= :guests')
+               ->setParameter('guests', $criteria['guests']);
+        }
+
+        // Order by rating and price for better results
+        $qb->orderBy('h.rating', 'DESC')
+           ->addOrderBy('h.pricePerNight', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Hotel[] Returns an array of Hotel objects
 //     */
